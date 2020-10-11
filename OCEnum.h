@@ -1,6 +1,7 @@
 #pragma once
 
 #import <Foundation/Foundation.h>
+#import "OCEnumValue.h"
 
 
 @interface OCEnum : NSObject {
@@ -9,8 +10,6 @@
     NSUUID *uuid;
 }
 
-+(NSNumber *) valueOf: (void *)enumValue;
-+(BOOL) isEqualBetweenEnum: (void *)a andEnum: (void *)b;
 -(OCEnum *) initSymbolWithStrings:(NSString *)first, ...;
 -(OCEnum *) initFlagWithStrings:(NSString *)first, ...;
 -(void) dealloc;

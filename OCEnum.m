@@ -20,31 +20,12 @@ static enum_t * enum_value(id self, SEL cmd)
 
     NSMutableDictionary *_data = [_self data];
 
-    enum_t *e = [[_data valueForKey:NSStringFromSelector(cmd)] pointerValue];
+    OCEnumValue *e = [_data valueForKey:NSStringFromSelector(cmd)];
 
     return e;
 }
 
 @implementation OCEnum
-+(NSNumber *) valueOf: (void *)enumValue
-{
-    enum_t *e = (enum_t *)enumValue;
-    return [NSNumber numberWithUnsignedInt:e->value];
-}
-
-#define IS_UUID_EQUAL(a, b) [(a).UUIDString isEqualToString: (b).UUIDString]
-
-+(BOOL) isEqualBetweenEnum: (void *)a andEnum: (void *)b
-{
-    enum_t *_a = (enum_t *)a;
-    enum_t *_b = (enum_t *)b;
-
-    if (!(IS_UUID_EQUAL(_a->uuid, _b->uuid)))
-        return NO;
-
-    return _a->value == _b->value;
-}
-
 -(OCEnum *) initSymbolWithStrings:(NSString *)first, ...
 {
     if (!self)
@@ -60,17 +41,14 @@ static enum_t * enum_value(id self, SEL cmd)
         return nil;
     }
 
-    enum_t *_first = malloc(sizeof(enum_t));
+    OCEnumValue *_first = [[OCEnumValue alloc]
+        initWithUUID:[self uuid] value:[NSNumber numberWithUnsignedInt: 0]];
     if (!_first) {
-        [data release];
         [self release];
         return nil;
     }
 
-    _first->value = 0;
-    _first->uuid = [self uuid];
-
-    [data setObject:[NSValue valueWithPointer:_first] forKey: first];
+    [data setObject:_first forKey: first];
 
     va_list args;
     va_start(args, first);
@@ -78,21 +56,14 @@ static enum_t * enum_value(id self, SEL cmd)
     unsigned i = 1;
     id arg = nil;
     while ((arg = va_arg(args, id))) {
-        enum_t *_arg = malloc(sizeof(enum_t));
+        OCEnumValue *_arg = [[OCEnumValue alloc]
+            initWithUUID:[self uuid] value:[NSNumber numberWithUnsignedInt:i]];
         if (!_arg) {
-            va_end(args);
-            for (NSString *key in [data allKeys]) {
-                NSValue *v = [data valueForKey:key];
-                enum_t *e = [v pointerValue];
-                free(e);
-            }
-            [data release];
             [self release];
+            va_end(args);
             return nil;
         }
-        _arg->value = i;
-        _arg->uuid = [self uuid];
-        [data setObject:[NSValue valueWithPointer:_arg] forKey: arg];
+        [data setObject:_arg forKey: arg];
         ++i;
     }
 
@@ -123,17 +94,14 @@ static enum_t * enum_value(id self, SEL cmd)
         return nil;
     }
 
-    enum_t *_first = malloc(sizeof(enum_t));
+    OCEnumValue *_first = [[OCEnumValue alloc]
+        initWithUUID:[self uuid] value:[NSNumber numberWithUnsignedInt: 1]];
     if (!_first) {
-        [data release];
         [self release];
         return nil;
     }
 
-    _first->value = 1;
-    _first->uuid = [self uuid];
-
-    [data setObject:[NSValue valueWithPointer:_first] forKey: first];
+    [data setObject:_first forKey: first];
 
     va_list args;
     va_start(args, first);
@@ -141,21 +109,14 @@ static enum_t * enum_value(id self, SEL cmd)
     unsigned i = 2;
     id arg = nil;
     while ((arg = va_arg(args, id))) {
-        enum_t *_arg = malloc(sizeof(enum_t));
+        OCEnumValue *_arg =[[OCEnumValue alloc]
+            initWithUUID:[self uuid] value:[NSNumber numberWithUnsignedInt:i]];
         if (!_arg) {
-            va_end(args);
-            for (NSString *key in [data allKeys]) {
-                NSValue *v = [data valueForKey:key];
-                enum_t *e = [v pointerValue];
-                free(e);
-            }
-            [data release];
             [self release];
+            va_end(args);
             return nil;
         }
-        _arg->value = i;
-        _arg->uuid = [self uuid];
-        [data setObject:[NSValue valueWithPointer:_arg] forKey: arg];
+        [data setObject:_arg forKey: arg];
         i <<= 1;
     }
 
@@ -173,12 +134,6 @@ static enum_t * enum_value(id self, SEL cmd)
 
 -(void) dealloc
 {
-    for (NSString *key in [data allKeys]) {
-        NSValue *v = [data valueForKey:key];
-        enum_t *e = [v pointerValue];
-        free(e);
-    }
-
     [data release];
     [super dealloc];
 }
@@ -186,19 +141,18 @@ static enum_t * enum_value(id self, SEL cmd)
 -(NSNumber *) combineFlagsByStrings:(NSString *)first, ...
 {
     unsigned result = 0;
-    enum_t *e = NULL;
+    OCEnumValue *e = nil;
     
-    e = [[data valueForKey:first] pointerValue];
-    result |= e->value;
+    e = [data valueForKey:first];
+    result |= [[e value] unsignedIntValue];
 
     va_list args;
     va_start(args, first);
 
-    unsigned i = 2;
     id arg = nil;
     while ((arg = va_arg(args, id))) {
-        e = [[data valueForKey:arg] pointerValue];
-        result |= e->value;
+        e = [data valueForKey:arg];
+        result |= [[e value] unsignedIntValue];
     }
 
     va_end(args);
@@ -209,10 +163,10 @@ static enum_t * enum_value(id self, SEL cmd)
 -(NSNumber *) combineFlagsBySelectors:(SEL)first, ...
 {
     unsigned result = 0;
-    enum_t *e = NULL;
+    OCEnumValue *e = nil;
     
-    e = [[data valueForKey:NSStringFromSelector(first)] pointerValue];
-    result |= e->value;
+    e = [data valueForKey:NSStringFromSelector(first)];
+    result |= [[e value] unsignedIntValue];
 
     va_list args;
     va_start(args, first);
@@ -221,8 +175,8 @@ static enum_t * enum_value(id self, SEL cmd)
     id arg = nil;
     while ((arg = va_arg(args, id))) {
         SEL _arg = arg;
-        e = [[data valueForKey:NSStringFromSelector(_arg)] pointerValue];
-        result |= e->value;
+        e = [data valueForKey:NSStringFromSelector(_arg)];
+        result |= [[e value] unsignedIntValue];
     }
 
     va_end(args);

@@ -22,7 +22,7 @@ else
 	TARGET=ocEnumDemo
 endif
 
-OBJS=OCEnum.o main.o
+OBJS=OCEnum.o OCEnumValue.o main.o
 
 
 # Set the include path of libobjc on non-Apple platforms.

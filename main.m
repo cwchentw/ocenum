@@ -15,13 +15,13 @@ int main(void)
             initSymbolWithStrings: @"green", @"yellow", @"red", nil]
                 autorelease];
         
-        assert(0 == [[OCEnum valueOf:[trafficLight green]] unsignedIntValue]);
-        assert(1 == [[OCEnum valueOf:[trafficLight yellow]] unsignedIntValue]);
-        assert(2 == [[OCEnum valueOf:[trafficLight red]] unsignedIntValue]);
+        assert(0 == [[[trafficLight green] value] unsignedIntValue]);
+        assert(1 == [[[trafficLight yellow] value] unsignedIntValue]);
+        assert(2 == [[[trafficLight red] value] unsignedIntValue]);
 
-        void *redLight = [trafficLight red];
-        assert([OCEnum isEqualBetweenEnum:redLight andEnum:[trafficLight red]]);
-        assert(![OCEnum isEqualBetweenEnum:redLight andEnum:[trafficLight green]]);
+        OCEnumValue *redLight = [trafficLight red];
+        assert([redLight isEqualToEnumValue:[trafficLight red]]);
+        assert(![redLight isEqualToEnumValue:[trafficLight green]]);
     }
 
     {
@@ -29,9 +29,9 @@ int main(void)
             initFlagWithStrings: @"exec", @"write", @"read", nil]
                 autorelease];
 
-        assert(1 == [[OCEnum valueOf:[fileMode exec]] unsignedIntValue]);
-        assert(2 == [[OCEnum valueOf:[fileMode write]] unsignedIntValue]);
-        assert(4 == [[OCEnum valueOf:[fileMode read]] unsignedIntValue]);
+        assert(1 == [[[fileMode exec] value] unsignedIntValue]);
+        assert(2 == [[[fileMode write] value] unsignedIntValue]);
+        assert(4 == [[[fileMode read] value] unsignedIntValue]);
 
         unsigned mode = [[fileMode
             combineFlagsByStrings: @"read", @"exec", nil]
