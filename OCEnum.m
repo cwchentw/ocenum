@@ -85,7 +85,6 @@ static enum_t * enum_value(id self, SEL cmd)
                 NSValue *v = [data valueForKey:key];
                 enum_t *e = [v pointerValue];
                 free(e);
-                [v release];
             }
             [data release];
             [self release];
@@ -149,7 +148,6 @@ static enum_t * enum_value(id self, SEL cmd)
                 NSValue *v = [data valueForKey:key];
                 enum_t *e = [v pointerValue];
                 free(e);
-                [v release];
             }
             [data release];
             [self release];
@@ -185,7 +183,7 @@ static enum_t * enum_value(id self, SEL cmd)
     [super dealloc];
 }
 
--(unsigned) combineFlagsByStrings:(NSString *)first, ...
+-(NSNumber *) combineFlagsByStrings:(NSString *)first, ...
 {
     unsigned result = 0;
     enum_t *e = NULL;
@@ -208,7 +206,7 @@ static enum_t * enum_value(id self, SEL cmd)
     return [NSNumber numberWithUnsignedInt:result];
 }
 
--(unsigned) combineFlagsBySelectors:(SEL)first, ...
+-(NSNumber *) combineFlagsBySelectors:(SEL)first, ...
 {
     unsigned result = 0;
     enum_t *e = NULL;
