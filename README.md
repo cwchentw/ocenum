@@ -11,7 +11,21 @@ Tested against GNUstep on Ubuntu 18.04 LTS. It should work on MacOS as well.
 
 ## Usage
 
-See [main.m](/main.m).
+Build a dynamic library:
+
+```
+$ make dynamic
+```
+
+Build a static library:
+
+```
+$ make static
+```
+
+## Documentation
+
+See [main.m](/main.m) for its usage.
 
 ## Copyright
 
