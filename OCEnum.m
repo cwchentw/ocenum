@@ -138,6 +138,28 @@ static enum_t * enum_value(id self, SEL cmd)
     [super dealloc];
 }
 
+-(NSNumber *) combineFlags:(OCEnumValue *)first, ...
+{
+    unsigned result = 0;
+    OCEnumValue *e = nil;
+
+    e = first;
+    result |= [[e value] unsignedIntValue];
+
+    va_list args;
+    va_start(args, first);
+
+    id arg = nil;
+    while ((arg = va_arg(args, id))) {
+        e = arg;
+        result |= [[e value] unsignedIntValue];
+    }
+
+    va_end(args);
+
+    return [NSNumber numberWithUnsignedInt:result];
+}
+
 -(NSNumber *) combineFlagsByStrings:(NSString *)first, ...
 {
     unsigned result = 0;

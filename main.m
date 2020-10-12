@@ -33,7 +33,17 @@ int main(void)
         assert(2 == [[[fileMode write] value] unsignedIntValue]);
         assert(4 == [[[fileMode read] value] unsignedIntValue]);
 
-        unsigned mode = [[fileMode
+        unsigned mode = [[fileMode combineFlags:
+            [fileMode read], [fileMode exec], nil]
+                unsignedIntValue];
+        assert(5 == mode);
+
+        mode = [[fileMode combineFlags:
+            [fileMode read], [fileMode write], [fileMode exec], nil]
+                unsignedIntValue];
+        assert(7 == mode);
+
+        mode = [[fileMode
             combineFlagsByStrings: @"read", @"exec", nil]
                 unsignedIntValue];
         assert(5 == mode);

@@ -13,6 +13,7 @@
 -(OCEnum *) initSymbolWithStrings:(NSString *)first, ...;
 -(OCEnum *) initFlagWithStrings:(NSString *)first, ...;
 -(void) dealloc;
+-(NSNumber *) combineFlags:(OCEnumValue *)first, ...;
 -(NSNumber *) combineFlagsByStrings:(NSString *)first, ...;
 -(NSNumber *) combineFlagsBySelectors:(SEL)first, ...;
 @end
