@@ -1,20 +1,13 @@
 #import <stdarg.h>
 #import "OCEnum.h"
 
-typedef struct enum_t enum_t;
-
-struct enum_t {
-    unsigned value;
-    NSUUID *uuid;
-};
-
 
 @interface OCEnum ()
 -(NSMutableDictionary *) data;
 -(NSUUID *) uuid;
 @end
 
-static enum_t * enum_value(id self, SEL cmd)
+static OCEnumValue * enum_value(id self, SEL cmd)
 {
     OCEnum *_self = self;
 
