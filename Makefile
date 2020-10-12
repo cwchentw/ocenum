@@ -45,7 +45,11 @@ OBJC_INCLUDE := -I $(GCC_LIB)/include
 all: $(TARGET)
 
 $(TARGET): $(OBJS) $(STATIC_LIB)
+ifeq ($(detected_OS),Darwin)
+	$(CC) -o $(TARGET) $(STATIC_LIB) -lobjc -framework Foundation
+else
 	$(CC) -o $(TARGET) $(STATIC_LIB) -lobjc -lgnustep-base -L $(GNUSTEP_LIB)
+endif
 
 dynamic: $(DYNAMIC_LIB)
 
