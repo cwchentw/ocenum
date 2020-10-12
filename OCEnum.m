@@ -166,6 +166,9 @@ static enum_t * enum_value(id self, SEL cmd)
     OCEnumValue *e = nil;
     
     e = [data valueForKey:first];
+    if (!e)
+        return nil;
+
     result |= [[e value] unsignedIntValue];
 
     va_list args;
@@ -174,6 +177,11 @@ static enum_t * enum_value(id self, SEL cmd)
     id arg = nil;
     while ((arg = va_arg(args, id))) {
         e = [data valueForKey:arg];
+        if (!e) {
+            va_end(args);
+            return nil;
+        }
+
         result |= [[e value] unsignedIntValue];
     }
 
@@ -188,6 +196,9 @@ static enum_t * enum_value(id self, SEL cmd)
     OCEnumValue *e = nil;
     
     e = [data valueForKey:NSStringFromSelector(first)];
+    if (!e)
+        return nil;
+
     result |= [[e value] unsignedIntValue];
 
     va_list args;
@@ -198,6 +209,11 @@ static enum_t * enum_value(id self, SEL cmd)
     while ((arg = va_arg(args, id))) {
         SEL _arg = arg;
         e = [data valueForKey:NSStringFromSelector(_arg)];
+        if (!e) {
+            va_end(args);
+            return nil;
+        }
+
         result |= [[e value] unsignedIntValue];
     }
 
