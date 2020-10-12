@@ -1,6 +1,6 @@
 # ocenum
 
-Enum class for Objective-C.
+Enumeration class for Objective-C.
 
 ## System Requirements
 
@@ -26,6 +26,10 @@ $ make static
 ## Documentation
 
 See [main.m](/main.m) for its usage.
+
+## Note
+
+Your Objective-C compiler will emit many warnings about potentially unresponsive messages. It's fine to neglect these warnings because those messages are generated on runtime, not showing in the interface of your enumeration object.
 
 ## Copyright
 
