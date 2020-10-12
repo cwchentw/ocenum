@@ -34,7 +34,8 @@ endif
 	STATIC_LIB=libocenum.a
 endif
 
-OBJS=OCEnum.o OCEnumValue.o main.o
+OBJS=OCEnum.o OCEnumValue.o
+TARGET_OBJS=main.o
 
 
 # Set the include path of libobjc on non-Apple platforms.
@@ -44,7 +45,7 @@ OBJC_INCLUDE := -I $(GCC_LIB)/include
 
 all: $(TARGET)
 
-$(TARGET): $(OBJS) $(STATIC_LIB)
+$(TARGET): $(OBJS) $(TARGET_OBJS) $(STATIC_LIB)
 ifeq ($(detected_OS),Darwin)
 	$(CC) -o $(TARGET) $(STATIC_LIB) -lobjc -framework Foundation
 else
@@ -55,6 +56,8 @@ dynamic: $(DYNAMIC_LIB)
 
 $(DYNAMIC_LIB): $(OBJS)
 	$(CC) -shared -o $(DYNAMIC_LIB) $(OBJS)
+
+static: $(STATIC_LIB)
 
 static: $(STATIC_LIB)
 
