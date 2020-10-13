@@ -47,9 +47,9 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS) $(TARGET_OBJS) $(STATIC_LIB)
 ifeq ($(detected_OS),Darwin)
-	$(CC) -o $(TARGET) $(STATIC_LIB) -lobjc -framework Foundation
+	$(CC) -o $(TARGET) $(TARGET_OBJS) $(STATIC_LIB) -lobjc -framework Foundation
 else
-	$(CC) -o $(TARGET) $(STATIC_LIB) -lobjc -lgnustep-base -L $(GNUSTEP_LIB)
+	$(CC) -o $(TARGET) $(TARGET_OBJS) $(STATIC_LIB) -lobjc -lgnustep-base -L $(GNUSTEP_LIB)
 endif
 
 dynamic: $(DYNAMIC_LIB)
