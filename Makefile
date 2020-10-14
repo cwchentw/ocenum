@@ -88,4 +88,4 @@ endif
 endif
 		
 clean:
-	$(RM) $(TARGET) $(DYNAMIC_LIB) $(STATIC_LIB) $(OBJS)
+	$(RM) $(TARGET) $(DYNAMIC_LIB) $(STATIC_LIB) $(TARGET_OBJS) $(OBJS)

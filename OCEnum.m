@@ -28,6 +28,12 @@ static OCEnumValue * enum_value(id self, SEL cmd)
 
     uuid = [NSUUID UUID];
 
+    keys = [[NSMutableArray alloc] init];
+    if (!keys) {
+        [self release];
+        return nil;
+    }
+
     data = [[NSMutableDictionary alloc] init];
     if (!data) {
         [self release];
@@ -41,6 +47,7 @@ static OCEnumValue * enum_value(id self, SEL cmd)
         return nil;
     }
 
+    [keys addObject: first];
     [data setObject:_first forKey: first];
 
     va_list args;
@@ -56,7 +63,10 @@ static OCEnumValue * enum_value(id self, SEL cmd)
             va_end(args);
             return nil;
         }
+
+        [keys addObject: arg];
         [data setObject:_arg forKey: arg];
+
         ++i;
     }
 
@@ -81,6 +91,12 @@ static OCEnumValue * enum_value(id self, SEL cmd)
 
     uuid = [NSUUID UUID];
 
+    keys = [[NSMutableArray alloc] init];
+    if (!keys) {
+        [self release];
+        return nil;
+    }
+
     data = [[NSMutableDictionary alloc] init];
     if (!data) {
         [self release];
@@ -94,6 +110,7 @@ static OCEnumValue * enum_value(id self, SEL cmd)
         return nil;
     }
 
+    [keys addObject: first];
     [data setObject:_first forKey: first];
 
     va_list args;
@@ -109,7 +126,10 @@ static OCEnumValue * enum_value(id self, SEL cmd)
             va_end(args);
             return nil;
         }
+
+        [keys addObject: arg];
         [data setObject:_arg forKey: arg];
+
         i <<= 1;
     }
 
@@ -129,6 +149,18 @@ static OCEnumValue * enum_value(id self, SEL cmd)
 {
     [data release];
     [super dealloc];
+}
+
+-(NSArray *) values
+{
+    NSMutableArray *vs = [[NSMutableArray alloc] init];
+    if (!vs)
+        return nil;
+
+    for (NSString *key in keys)
+        [vs addObject: [data valueForKey:key]];
+
+    return [NSArray arrayWithArray:vs];
 }
 
 -(NSNumber *) combineFlags:(OCEnumValue *)first, ...
