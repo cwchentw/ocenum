@@ -11,8 +11,8 @@
     NSUUID *uuid;
 }
 
--(OCEnum *) initSymbolWithStrings:(NSString *)first, ...;
--(OCEnum *) initFlagWithStrings:(NSString *)first, ...;
+-(instancetype) initSymbolWithStrings:(NSString *)first, ...;
+-(instancetype) initFlagWithStrings:(NSString *)first, ...;
 -(void) dealloc;
 -(Class) enumClass;
 -(NSArray *) values;

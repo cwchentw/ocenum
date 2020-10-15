@@ -7,19 +7,10 @@
 -(NSUUID *) uuid;
 @end
 
-static id enum_value(id self, SEL cmd)
-{
-    OCEnum *_self = self;
-
-    NSMutableDictionary *_data = [_self data];
-
-    id e = [_data valueForKey:NSStringFromSelector(cmd)];
-
-    return e;
-}
-
 @implementation OCEnum
--(OCEnum *) initSymbolWithStrings:(NSString *)first, ...
+static id enum_value(id self, SEL cmd);
+
+-(instancetype) initSymbolWithStrings:(NSString *)first, ...
 {
     if (!self)
         return self;
@@ -84,7 +75,18 @@ static id enum_value(id self, SEL cmd)
     return self;
 }
 
--(OCEnum *) initFlagWithStrings:(NSString *)first, ...
+static id enum_value(id self, SEL cmd)
+{
+    OCEnum *_self = self;
+
+    NSMutableDictionary *_data = [_self data];
+
+    id e = [_data valueForKey:NSStringFromSelector(cmd)];
+
+    return e;
+}
+
+-(instancetype) initFlagWithStrings:(NSString *)first, ...
 {
     if (!self)
         return self;
