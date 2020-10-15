@@ -7,13 +7,13 @@
 -(NSUUID *) uuid;
 @end
 
-static OCEnumValue * enum_value(id self, SEL cmd)
+static id enum_value(id self, SEL cmd)
 {
     OCEnum *_self = self;
 
     NSMutableDictionary *_data = [_self data];
 
-    OCEnumValue *e = [_data valueForKey:NSStringFromSelector(cmd)];
+    id e = [_data valueForKey:NSStringFromSelector(cmd)];
 
     return e;
 }
@@ -28,14 +28,16 @@ static OCEnumValue * enum_value(id self, SEL cmd)
 
     uuid = [NSUUID UUID];
 
+    enumClass = [self enumClass];
+
     data = [[NSMutableDictionary alloc] init];
     if (!data) {
         [self release];
         return nil;
     }
 
-    OCEnumValue *_first = [[OCEnumValue alloc]
-        initWithUUID:[self uuid] value:[NSNumber numberWithUnsignedInt: 0]];
+    id _first = [[objc_getClass(class_getName(enumClass)) alloc]
+        initWithValue:[NSNumber numberWithUnsignedInt: 0]];
     if (!_first) {
         [self release];
         return nil;
@@ -49,8 +51,8 @@ static OCEnumValue * enum_value(id self, SEL cmd)
     unsigned i = 1;
     id arg = nil;
     while ((arg = va_arg(args, id))) {
-        OCEnumValue *_arg = [[OCEnumValue alloc]
-            initWithUUID:[self uuid] value:[NSNumber numberWithUnsignedInt:i]];
+        id _arg = [[objc_getClass(class_getName(enumClass)) alloc]
+            initWithValue:[NSNumber numberWithUnsignedInt:i]];
         if (!_arg) {
             [self release];
             va_end(args);
@@ -81,14 +83,16 @@ static OCEnumValue * enum_value(id self, SEL cmd)
 
     uuid = [NSUUID UUID];
 
+    enumClass = [self enumClass];
+
     data = [[NSMutableDictionary alloc] init];
     if (!data) {
         [self release];
         return nil;
     }
 
-    OCEnumValue *_first = [[OCEnumValue alloc]
-        initWithUUID:[self uuid] value:[NSNumber numberWithUnsignedInt: 1]];
+    id _first = [[objc_getClass(class_getName(enumClass)) alloc]
+        initWithValue:[NSNumber numberWithUnsignedInt: 1]];
     if (!_first) {
         [self release];
         return nil;
@@ -102,8 +106,8 @@ static OCEnumValue * enum_value(id self, SEL cmd)
     unsigned i = 2;
     id arg = nil;
     while ((arg = va_arg(args, id))) {
-        OCEnumValue *_arg =[[OCEnumValue alloc]
-            initWithUUID:[self uuid] value:[NSNumber numberWithUnsignedInt:i]];
+        id _arg =[[objc_getClass(class_getName(enumClass))  alloc]
+            initWithValue:[NSNumber numberWithUnsignedInt:i]];
         if (!_arg) {
             [self release];
             va_end(args);
@@ -131,21 +135,85 @@ static OCEnumValue * enum_value(id self, SEL cmd)
     [super dealloc];
 }
 
--(NSNumber *) combineFlags:(OCEnumValue *)first, ...
+static id enum_value_init(id self, SEL cmd, NSNumber *value);
+static id enum_value_value(id self, SEL cmd);
+static BOOL enum_value_is_equal_to(id self, SEL cmd, id other);
+
+-(Class) enumClass
+{
+    /* Singleton. */
+    if (enumClass)
+        return enumClass;
+
+    Class klass = objc_allocateClassPair(
+        [NSObject class],
+        [[NSString stringWithFormat:@"OCEnumValue%@",
+            [uuid UUIDString]] cString],
+        0);
+
+    class_addIvar(klass,
+        "value",
+        sizeof(NSNumber),
+        log2(sizeof(NSNumber *)),
+        "@");
+
+    class_addMethod(klass,
+        NSSelectorFromString(@"initWithValue:"),
+        (IMP)enum_value_init,
+        "@@:@");
+
+    class_addMethod(klass,
+        NSSelectorFromString(@"value"),
+        (IMP)enum_value_value,
+        "@@:");
+
+    class_addMethod(klass,
+        NSSelectorFromString(@"isEqualToEnumValue:"),
+        (IMP)enum_value_is_equal_to,
+        "@@:@");
+
+    objc_registerClassPair(klass);
+
+    return klass;
+}
+
+static id enum_value_init(id self, SEL cmd, NSNumber *value)
+{
+    Ivar v = class_getInstanceVariable([self class], "value");
+
+    object_setIvar(self, v, value);
+
+    return self;
+}
+
+static id enum_value_value(id self, SEL cmd)
+{
+    Ivar v = class_getInstanceVariable([self class], "value");
+
+    return object_getIvar(self, v);
+}
+
+static BOOL enum_value_is_equal_to(id self, SEL cmd, id other)
+{
+    if (![self isMemberOfClass:[other class]])
+        return NO;
+
+    return [[self value] unsignedIntValue]
+        == [[other value] unsignedIntValue];
+}
+
+-(NSNumber *) combineFlags:(id)first, ...
 {
     unsigned result = 0;
-    OCEnumValue *e = nil;
 
-    e = first;
-    result |= [[e value] unsignedIntValue];
+    result |= [enum_value_value(first, @selector(value)) unsignedIntValue];
 
     va_list args;
     va_start(args, first);
 
     id arg = nil;
     while ((arg = va_arg(args, id))) {
-        e = arg;
-        result |= [[e value] unsignedIntValue];
+        result |= [enum_value_value(arg, @selector(value)) unsignedIntValue];
     }
 
     va_end(args);
@@ -156,13 +224,13 @@ static OCEnumValue * enum_value(id self, SEL cmd)
 -(NSNumber *) combineFlagsByStrings:(NSString *)first, ...
 {
     unsigned result = 0;
-    OCEnumValue *e = nil;
+    id e = nil;
     
     e = [data valueForKey:first];
     if (!e)
         return nil;
 
-    result |= [[e value] unsignedIntValue];
+    result |= [enum_value_value(e, @selector(value)) unsignedIntValue];
 
     va_list args;
     va_start(args, first);
@@ -175,7 +243,7 @@ static OCEnumValue * enum_value(id self, SEL cmd)
             return nil;
         }
 
-        result |= [[e value] unsignedIntValue];
+        result |= [enum_value_value(e, @selector(value)) unsignedIntValue];
     }
 
     va_end(args);
@@ -186,13 +254,13 @@ static OCEnumValue * enum_value(id self, SEL cmd)
 -(NSNumber *) combineFlagsBySelectors:(SEL)first, ...
 {
     unsigned result = 0;
-    OCEnumValue *e = nil;
+    id e = nil;
     
     e = [data valueForKey:NSStringFromSelector(first)];
     if (!e)
         return nil;
 
-    result |= [[e value] unsignedIntValue];
+    result |= [enum_value_value(e, @selector(value)) unsignedIntValue];
 
     va_list args;
     va_start(args, first);
@@ -207,7 +275,7 @@ static OCEnumValue * enum_value(id self, SEL cmd)
             return nil;
         }
 
-        result |= [[e value] unsignedIntValue];
+        result |= [enum_value_value(e, @selector(value)) unsignedIntValue];
     }
 
     va_end(args);

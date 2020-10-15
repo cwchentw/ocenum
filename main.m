@@ -19,7 +19,7 @@ int main(void)
         assert(1 == [[[trafficLight yellow] value] unsignedIntValue]);
         assert(2 == [[[trafficLight red] value] unsignedIntValue]);
 
-        OCEnumValue *redLight = [trafficLight red];
+        id redLight = [trafficLight red];
         assert([redLight isEqualToEnumValue:[trafficLight red]]);
         assert(![redLight isEqualToEnumValue:[trafficLight green]]);
     }
