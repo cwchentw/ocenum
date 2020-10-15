@@ -30,6 +30,12 @@ static id enum_value(id self, SEL cmd)
 
     enumClass = [self enumClass];
 
+    keys = [[NSMutableArray alloc] init];
+    if (!keys) {
+        [self release];
+        return nil;
+    }
+
     data = [[NSMutableDictionary alloc] init];
     if (!data) {
         [self release];
@@ -43,7 +49,8 @@ static id enum_value(id self, SEL cmd)
         return nil;
     }
 
-    [data setObject:_first forKey: first];
+    [keys addObject:first];
+    [data setObject:_first forKey:first];
 
     va_list args;
     va_start(args, first);
@@ -59,7 +66,8 @@ static id enum_value(id self, SEL cmd)
             return nil;
         }
 
-        [data setObject:_arg forKey: arg];
+        [keys addObject:arg];
+        [data setObject:_arg forKey:arg];
 
         ++i;
     }
@@ -87,6 +95,12 @@ static id enum_value(id self, SEL cmd)
 
     enumClass = [self enumClass];
 
+    keys = [[NSMutableArray alloc] init];
+    if (!keys) {
+        [self release];
+        return nil;
+    }
+
     data = [[NSMutableDictionary alloc] init];
     if (!data) {
         [self release];
@@ -100,7 +114,8 @@ static id enum_value(id self, SEL cmd)
         return nil;
     }
 
-    [data setObject:_first forKey: first];
+    [keys addObject:first];
+    [data setObject:_first forKey:first];
 
     va_list args;
     va_start(args, first);
@@ -116,7 +131,8 @@ static id enum_value(id self, SEL cmd)
             return nil;
         }
 
-        [data setObject:_arg forKey: arg];
+        [keys addObject:arg];
+        [data setObject:_arg forKey:arg];
 
         i <<= 1;
     }
@@ -179,6 +195,19 @@ static BOOL enum_value_is_equal_to(id self, SEL cmd, id other);
     objc_registerClassPair(klass);
 
     return klass;
+}
+
+-(NSArray *) values
+{
+    NSMutableArray *arr = \
+        [[NSMutableArray alloc] init];
+    if (!arr)
+        return nil;
+
+    for (NSString *k in keys)
+        [arr addObject:[data valueForKey:k]];
+
+    return [NSArray arrayWithArray:arr];
 }
 
 static id enum_value_init(id self, SEL cmd, NSNumber *value)

@@ -3,6 +3,12 @@
 #import <Foundation/Foundation.h>
 #import "OCEnum.h"
 
+#define PUTS(FORMAT, ...) \
+    fprintf(stdout, "%s\n", \
+        [[NSString stringWithFormat:\
+            FORMAT, ##__VA_ARGS__] \
+                UTF8String]);
+
 int main(void)
 {
     NSAutoreleasePool *pool = \
@@ -22,6 +28,9 @@ int main(void)
         id redLight = [trafficLight red];
         assert([redLight isEqualToEnumValue:[trafficLight red]]);
         assert(![redLight isEqualToEnumValue:[trafficLight green]]);
+
+        for (id e in [trafficLight values])
+            PUTS(@"%@", [e value]);
     }
 
     {
@@ -32,6 +41,9 @@ int main(void)
         assert(1 == [[[fileMode exec] value] unsignedIntValue]);
         assert(2 == [[[fileMode write] value] unsignedIntValue]);
         assert(4 == [[[fileMode read] value] unsignedIntValue]);
+
+        for (id e in [fileMode values])
+            PUTS(@"%@", [e value]);
 
         unsigned mode = [[fileMode combineFlags:
             [fileMode read], [fileMode exec], nil]
