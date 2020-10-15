@@ -28,7 +28,15 @@ static id enum_value(id self, SEL cmd)
 
     uuid = [NSUUID UUID];
 
+<<<<<<< HEAD
     enumClass = [self enumClass];
+=======
+    keys = [[NSMutableArray alloc] init];
+    if (!keys) {
+        [self release];
+        return nil;
+    }
+>>>>>>> 4a62f64c5286bc0b2eb8cc73103eba3e3f3fe2bc
 
     data = [[NSMutableDictionary alloc] init];
     if (!data) {
@@ -43,6 +51,7 @@ static id enum_value(id self, SEL cmd)
         return nil;
     }
 
+    [keys addObject: first];
     [data setObject:_first forKey: first];
 
     va_list args;
@@ -58,7 +67,10 @@ static id enum_value(id self, SEL cmd)
             va_end(args);
             return nil;
         }
+
+        [keys addObject: arg];
         [data setObject:_arg forKey: arg];
+
         ++i;
     }
 
@@ -83,7 +95,15 @@ static id enum_value(id self, SEL cmd)
 
     uuid = [NSUUID UUID];
 
+<<<<<<< HEAD
     enumClass = [self enumClass];
+=======
+    keys = [[NSMutableArray alloc] init];
+    if (!keys) {
+        [self release];
+        return nil;
+    }
+>>>>>>> 4a62f64c5286bc0b2eb8cc73103eba3e3f3fe2bc
 
     data = [[NSMutableDictionary alloc] init];
     if (!data) {
@@ -98,6 +118,7 @@ static id enum_value(id self, SEL cmd)
         return nil;
     }
 
+    [keys addObject: first];
     [data setObject:_first forKey: first];
 
     va_list args;
@@ -113,7 +134,10 @@ static id enum_value(id self, SEL cmd)
             va_end(args);
             return nil;
         }
+
+        [keys addObject: arg];
         [data setObject:_arg forKey: arg];
+
         i <<= 1;
     }
 
@@ -135,6 +159,7 @@ static id enum_value(id self, SEL cmd)
     [super dealloc];
 }
 
+<<<<<<< HEAD
 static id enum_value_init(id self, SEL cmd, NSNumber *value);
 static id enum_value_value(id self, SEL cmd);
 static BOOL enum_value_is_equal_to(id self, SEL cmd, id other);
@@ -203,6 +228,21 @@ static BOOL enum_value_is_equal_to(id self, SEL cmd, id other)
 }
 
 -(NSNumber *) combineFlags:(id)first, ...
+=======
+-(NSArray *) values
+{
+    NSMutableArray *vs = [[NSMutableArray alloc] init];
+    if (!vs)
+        return nil;
+
+    for (NSString *key in keys)
+        [vs addObject: [data valueForKey:key]];
+
+    return [NSArray arrayWithArray:vs];
+}
+
+-(NSNumber *) combineFlags:(OCEnumValue *)first, ...
+>>>>>>> 4a62f64c5286bc0b2eb8cc73103eba3e3f3fe2bc
 {
     unsigned result = 0;
 
