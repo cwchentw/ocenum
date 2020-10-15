@@ -151,6 +151,7 @@ static id enum_value(id self, SEL cmd)
 
 -(void) dealloc
 {
+    [keys release];
     [data release];
     [super dealloc];
 }
