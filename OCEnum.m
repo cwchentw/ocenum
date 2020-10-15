@@ -4,7 +4,6 @@
 
 @interface OCEnum ()
 -(NSMutableDictionary *) data;
--(NSUUID *) uuid;
 @end
 
 @implementation OCEnum
@@ -17,7 +16,9 @@ static id enum_value(id self, SEL cmd);
 
     self = [super init];
 
-    uuid = [NSUUID UUID];
+    enumClass = nil;
+    keys = nil;
+    data = nil;
 
     enumClass = [self enumClass];
 
@@ -93,7 +94,9 @@ static id enum_value(id self, SEL cmd)
 
     self = [super init];
 
-    uuid = [NSUUID UUID];
+    enumClass = nil;
+    keys = nil;
+    data = nil;
 
     enumClass = [self enumClass];
 
@@ -171,7 +174,7 @@ static BOOL enum_value_is_equal_to(id self, SEL cmd, id other);
     Class klass = objc_allocateClassPair(
         [NSObject class],
         [[NSString stringWithFormat:@"OCEnumValue%@",
-            [uuid UUIDString]] cString],
+            [[NSUUID UUID] UUIDString]] cString],
         0);
 
     class_addIvar(klass,
@@ -200,19 +203,6 @@ static BOOL enum_value_is_equal_to(id self, SEL cmd, id other);
     return klass;
 }
 
--(NSArray *) values
-{
-    NSMutableArray *arr = \
-        [[NSMutableArray alloc] init];
-    if (!arr)
-        return nil;
-
-    for (NSString *k in keys)
-        [arr addObject:[data valueForKey:k]];
-
-    return [NSArray arrayWithArray:arr];
-}
-
 static id enum_value_init(id self, SEL cmd, NSNumber *value)
 {
     Ivar v = class_getInstanceVariable([self class], "value");
@@ -238,18 +228,33 @@ static BOOL enum_value_is_equal_to(id self, SEL cmd, id other)
         == [[other value] unsignedIntValue];
 }
 
+-(NSArray *) values
+{
+    NSMutableArray *arr = \
+        [[NSMutableArray alloc] init];
+    if (!arr)
+        return nil;
+
+    for (NSString *k in keys)
+        [arr addObject:[data valueForKey:k]];
+
+    return [NSArray arrayWithArray:arr];
+}
+
 -(NSNumber *) combineFlags:(id)first, ...
 {
     unsigned result = 0;
 
-    result |= [enum_value_value(first, @selector(value)) unsignedIntValue];
+    result |= [enum_value_value(first, @selector(value))
+        unsignedIntValue];
 
     va_list args;
     va_start(args, first);
 
     id arg = nil;
     while ((arg = va_arg(args, id))) {
-        result |= [enum_value_value(arg, @selector(value)) unsignedIntValue];
+        result |= [enum_value_value(arg, @selector(value))
+            unsignedIntValue];
     }
 
     va_end(args);
@@ -266,7 +271,8 @@ static BOOL enum_value_is_equal_to(id self, SEL cmd, id other)
     if (!e)
         return nil;
 
-    result |= [enum_value_value(e, @selector(value)) unsignedIntValue];
+    result |= [enum_value_value(e, @selector(value))
+        unsignedIntValue];
 
     va_list args;
     va_start(args, first);
@@ -279,7 +285,8 @@ static BOOL enum_value_is_equal_to(id self, SEL cmd, id other)
             return nil;
         }
 
-        result |= [enum_value_value(e, @selector(value)) unsignedIntValue];
+        result |= [enum_value_value(e, @selector(value))
+            unsignedIntValue];
     }
 
     va_end(args);
@@ -296,7 +303,8 @@ static BOOL enum_value_is_equal_to(id self, SEL cmd, id other)
     if (!e)
         return nil;
 
-    result |= [enum_value_value(e, @selector(value)) unsignedIntValue];
+    result |= [enum_value_value(e, @selector(value))
+        unsignedIntValue];
 
     va_list args;
     va_start(args, first);
@@ -311,7 +319,8 @@ static BOOL enum_value_is_equal_to(id self, SEL cmd, id other)
             return nil;
         }
 
-        result |= [enum_value_value(e, @selector(value)) unsignedIntValue];
+        result |= [enum_value_value(e, @selector(value))
+            unsignedIntValue];
     }
 
     va_end(args);
@@ -322,10 +331,5 @@ static BOOL enum_value_is_equal_to(id self, SEL cmd, id other)
 -(NSMutableDictionary *) data
 {
     return data;
-}
-
--(NSUUID *) uuid;
-{
-    return uuid;
 }
 @end

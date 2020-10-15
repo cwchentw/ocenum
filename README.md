@@ -6,6 +6,7 @@ Enumeration class for Objective-C.
 
 * Clang or GCC with Objective-C support
 * Cocoa or GNUstep
+* libobjc2 (Clang only)
 
 Tested against GNUstep on Ubuntu 18.04 LTS. It should work on MacOS as well.
 

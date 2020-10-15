@@ -14,8 +14,6 @@ ifeq (,$(GNUSTEP_LIB))
 	GNUSTEP_LIB=/usr/GNUstep/System/Library/Libraries
 endif
 
-GCC_LIB=$(shell sh -c 'dirname `gcc -print-prog-name=cc1 /dev/null`')
-
 ifeq ($(detected_OS),Windows)
 	TARGET=ocEnumDemo.exe
 else
@@ -37,18 +35,17 @@ endif
 OBJS=OCEnum.o main.o
 
 
-# Set the include path of libobjc on non-Apple platforms.
-OBJC_INCLUDE := -I $(GCC_LIB)/include
-
 .PHONY: all dynamic static clean
 
 all: $(TARGET)
 
 $(TARGET): $(OBJS) $(TARGET_OBJS) $(STATIC_LIB)
 ifeq ($(detected_OS),Darwin)
-	$(CC) -o $(TARGET) $(TARGET_OBJS) $(STATIC_LIB) -lobjc -framework Foundation
+	$(CC) -o $(TARGET) $(TARGET_OBJS) $(STATIC_LIB) \
+		-lm -lobjc -framework Foundation
 else
-	$(CC) -o $(TARGET) $(TARGET_OBJS) $(STATIC_LIB) -lobjc -lgnustep-base -L $(GNUSTEP_LIB)
+	$(CC) -o $(TARGET) $(TARGET_OBJS) $(STATIC_LIB) \
+		-lm -lobjc -lgnustep-base -L $(GNUSTEP_LIB)
 endif
 
 dynamic: $(DYNAMIC_LIB)
@@ -78,11 +75,11 @@ else
 endif
 else
 ifeq (dynamic,$(MAKECMDGOALS))
-	$(CC) -fPIC -std=c11 -c $< -o $@ $(CFLAGS) $(OBJC_INCLUDE) \
-		-I $(GNUSTEP_INCLUDE) -fconstant-string-class=NSConstantString
+	$(CC) -fPIC -std=c11 -c $< -o $@ $(CFLAGS) -I $(GNUSTEP_INCLUDE) \
+		-fconstant-string-class=NSConstantString
 else
-	$(CC) -std=c11 -c $< -o $@ $(CFLAGS) $(OBJC_INCLUDE) \
-		-I $(GNUSTEP_INCLUDE) -fconstant-string-class=NSConstantString
+	$(CC) -std=c11 -c $< -o $@ $(CFLAGS) -I $(GNUSTEP_INCLUDE) \
+		-fconstant-string-class=NSConstantString
 endif
 endif
 		

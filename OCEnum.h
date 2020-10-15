@@ -8,7 +8,6 @@
     Class enumClass;
     NSMutableArray *keys;
     NSMutableDictionary *data;
-    NSUUID *uuid;
 }
 
 -(instancetype) initSymbolWithStrings:(NSString *)first, ...;
