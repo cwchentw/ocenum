@@ -21,6 +21,10 @@ static id enum_value(id self, SEL cmd);
     data = nil;
 
     enumClass = [self enumClass];
+    if (!enumClass) {
+        [self release];
+        return nil;
+    }
 
     keys = [[NSMutableArray alloc] init];
     if (!keys) {
