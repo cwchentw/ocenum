@@ -160,6 +160,7 @@ static id enum_value(id self, SEL cmd)
 
 -(void) dealloc
 {
+    [enumClass release];  /* FIXME: Check it later. */
     [keys release];
     [data release];
     [super dealloc];
