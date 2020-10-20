@@ -1,4 +1,5 @@
-#import <stdarg.h>
+#include <stdarg.h>
+#include <objc/objc-runtime.h>
 #import "OCEnum.h"
 
 
@@ -184,7 +185,7 @@ static BOOL enum_value_is_equal_to(id self, SEL cmd, id other);
 
     class_addIvar(klass,
         "value",
-        sizeof(NSNumber),
+        class_getInstanceSize([NSNumber class]),
         log2(sizeof(NSNumber *)),
         "@");
 
