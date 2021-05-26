@@ -34,7 +34,8 @@ endif
 	STATIC_LIB=libocenum.a
 endif
 
-OBJS=OCEnum.o main.o
+OBJS=OCEnum.o
+TARGET_OBJS=main.o
 
 
 # Set the include path of libobjc on non-Apple platforms.
