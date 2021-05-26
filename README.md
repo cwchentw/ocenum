@@ -7,7 +7,7 @@ Enumeration class for Objective-C.
 * Clang or GCC with Objective-C support
 * Cocoa or GNUstep
 
-Tested against GNUstep on Ubuntu 18.04 LTS. It should work on MacOS as well.
+Tested against GNUstep on Ubuntu 18.04 LTS.
 
 ## Usage
 
@@ -33,6 +33,8 @@ Your Objective-C compiler will emit many warnings about potentially unresponsive
 
 For better compatibility between libobjc and GNUstep, we use the libobjc of GCC on non-Apple platforms.
 
+`OCEnum` may not work on some versions of MacOS.
+
 ## Copyright
 
-Copyright (c) 2020 Michael Chen.  Licensed under MIT.
+Copyright (c) 2020-201 Michael Chen.  Licensed under MIT.
