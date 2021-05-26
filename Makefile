@@ -71,13 +71,23 @@ endif
 
 %.o:%.m
 ifeq ($(detected_OS),Darwin)
+ifeq (,$(MAKECMDGOALS))
+	$(CC) -fPIC -std=c11 -c $< -o $@ $(CFLAGS) \
+		-fconstant-string-class=NSConstantString
+else
 ifeq (dynamic,$(MAKECMDGOALS))
 	$(CC) -fPIC -std=c11 -c $< -o $@ $(CFLAGS) \
 		-fconstant-string-class=NSConstantString
 else
 	$(CC) -std=c11 -c $< -o $@ $(CFLAGS) \
 		-fconstant-string-class=NSConstantString
-endif
+endif  # make dynamic
+endif  # make
+else
+ifeq (,$(MAKECMDGOALS))
+	$(CC) -fPIC -std=c11 -c $< -o $@ $(CFLAGS) \
+		$(OBJC_INCLUDE) -I $(GNUSTEP_INCLUDE) \
+		-fconstant-string-class=NSConstantString
 else
 ifeq (dynamic,$(MAKECMDGOALS))
 	$(CC) -fPIC -std=c11 -c $< -o $@ $(CFLAGS) \
@@ -87,8 +97,9 @@ else
 	$(CC) -std=c11 -c $< -o $@ $(CFLAGS) \
 		$(OBJC_INCLUDE) -I $(GNUSTEP_INCLUDE) \
 		-fconstant-string-class=NSConstantString
-endif
-endif
+endif  # make dynamic
+endif  # make
+endif  # Darwin
 		
 clean:
 	$(RM) $(TARGET) $(DYNAMIC_LIB) $(STATIC_LIB) $(TARGET_OBJS) $(OBJS)
