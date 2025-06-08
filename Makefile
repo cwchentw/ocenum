@@ -73,29 +73,29 @@ endif
 %.o:%.m
 ifeq ($(detected_OS),Darwin)
 ifeq (,$(MAKECMDGOALS))
-	$(CC) -fPIC -std=c11 -c $< -o $@ $(CFLAGS) \
+	$(CC) -fPIC -c $< -o $@ $(CFLAGS) \
 		-fconstant-string-class=NSConstantString
 else
 ifeq (dynamic,$(MAKECMDGOALS))
-	$(CC) -fPIC -std=c11 -c $< -o $@ $(CFLAGS) \
+	$(CC) -fPIC -c $< -o $@ $(CFLAGS) \
 		-fconstant-string-class=NSConstantString
 else
-	$(CC) -std=c11 -c $< -o $@ $(CFLAGS) \
+	$(CC) -c $< -o $@ $(CFLAGS) \
 		-fconstant-string-class=NSConstantString
 endif  # make dynamic
 endif  # make
 else
 ifeq (,$(MAKECMDGOALS))
-	$(CC) -fPIC -std=c11 -c $< -o $@ $(CFLAGS) \
+	$(CC) -fPIC -c $< -o $@ $(CFLAGS) \
 		$(OBJC_INCLUDE) -I $(GNUSTEP_INCLUDE) \
 		-fconstant-string-class=NSConstantString
 else
 ifeq (dynamic,$(MAKECMDGOALS))
-	$(CC) -fPIC -std=c11 -c $< -o $@ $(CFLAGS) \
+	$(CC) -fPIC -c $< -o $@ $(CFLAGS) \
 		$(OBJC_INCLUDE) -I $(GNUSTEP_INCLUDE) \
 		-fconstant-string-class=NSConstantString
 else
-	$(CC) -std=c11 -c $< -o $@ $(CFLAGS) \
+	$(CC) -c $< -o $@ $(CFLAGS) \
 		$(OBJC_INCLUDE) -I $(GNUSTEP_INCLUDE) \
 		-fconstant-string-class=NSConstantString
 endif  # make dynamic
