@@ -1,40 +1,41 @@
-# ocenum
+# OCEnum
 
-Enumeration class for Objective-C.
+A lightweight enumeration class system for Objective-C, inspired by Java-style enums.
+
+OCEnum allows you to define enums as objects with names and values, enabling type-safe comparisons, string representation, and runtime reflection—features not natively available in Objective-C.
 
 ## System Requirements
 
-* Clang or GCC with Objective-C support
-* Cocoa or GNUstep
+- Clang or GCC with Objective-C support
+- Cocoa (macOS) or GNUstep (Linux / cross-platform)
 
-Tested against GNUstep on Ubuntu 18.04 LTS.
+Tested on **GNUstep** with **Ubuntu 24.04 LTS**.
 
-## Usage
+## Building
 
-Build a dynamic library:
+To build as a dynamic library:
 
-```
-$ make dynamic
-```
-
-Build a static library:
-
-```
-$ make static
+```sh
+make dynamic
 ```
 
-## Documentation
+To build as a static library:
 
-See [main.m](/main.m) for its usage.
+```sh
+make static
+```
 
-## Note
+## Example Usage
 
-Your Objective-C compiler will emit many warnings about potentially unresponsive messages. It's fine to neglect these warnings because those messages are generated on runtime, not showing in the interface of your enumeration object.
+See [`main.m`](main.m) for a full example of how to declare and use an OCEnum.
 
-For better compatibility between libobjc and GNUstep, we use the libobjc of GCC on non-Apple platforms.
+## Notes
 
-`OCEnum` may not work on some versions of MacOS.
+- The Objective-C compiler may emit warnings about "unrecognized selectors" when compiling OCEnum code. These warnings are safe to ignore: OCEnum uses runtime message dispatch to implement dynamic behavior, and those selectors are not declared in static interfaces.
+- For compatibility on non-Apple platforms, the build system uses **GCC's `libobjc`** when compiling under GNUstep.
+- Compatibility on macOS may vary depending on your version of the Objective-C runtime.
 
-## Copyright
+## License
 
-Copyright (c) 2020-2021 Michelle Chen.  Licensed under MIT.
+MIT License
+© 2020–2025 ByteBard
